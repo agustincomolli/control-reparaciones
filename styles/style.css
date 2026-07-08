@@ -1,0 +1,495 @@
+/**
+ * ==========================================================================
+ * SISTEMA DE HOJAS DE ESTILO - APP DE CONTROL DE REPARACIONES
+ * Diseño modular basado en Custom Properties (Variables CSS) para Soporte Dark Mode
+ * ==========================================================================
+ */
+
+/* Variables globales en modo claro */
+:root {
+    --bg-color: #f4f7f6;
+    --card-bg: #ffffff;
+    --text-color: #2d3748;
+    --text-muted: #718096;
+    --primary: #4f46e5;
+    --primary-hover: #4338ca;
+    --accent: #10b981;
+    --border: #e2e8f0;
+    --icon-color: #4f46e5;
+    --btn-file-bg: rgba(79, 70, 229, 0.08);
+}
+
+/* Inyección de variables en modo oscuro (Se activa añadiendo la clase al body) */
+.dark-mode {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f1f5f9;
+    --text-muted: #94a3b8;
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --border: #334155;
+    --icon-color: #38bdf8;
+    --btn-file-bg: rgba(255, 255, 255, 0.06);
+}
+
+/* Reseteo general y optimización de renderizado */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /* Fuente del sistema nativo para mejorar rendimiento UI/UX */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    /* Animación fluida al conmutar entre esquemas de color */
+    transition: background-color 0.3s, border-color 0.3s, color 0.3s;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 20px 14px;
+    display: flex;
+    justify-content: center;
+}
+
+/* Contenedor adaptativo móvil (patrón Mobile-First de ancho fijo máximo) */
+.app-container {
+    width: 100%;
+    max-width: 480px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 4px;
+}
+
+.header-title h1 {
+    font-size: 1.9rem;
+    font-weight: 700;
+}
+
+.header-title p {
+    color: var(--text-muted);
+    font-size: 1.15rem;
+}
+
+/* Botón flotante redondo para cambiar de tema */
+.theme-toggle {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: 12px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+}
+
+.theme-toggle svg {
+    width: 24px;
+    height: 24px;
+    fill: var(--text-color);
+}
+
+/* Estructuras base de tarjetas contenedoras (Cards) */
+.card {
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 4px 8px -1px rgba(0, 0, 0, 0.06);
+    border: 1px solid var(--border);
+}
+
+/* Barra informativa de estado del almacenamiento local */
+.file-status {
+    font-size: 1.05rem;
+    padding: 12px 16px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+    background: rgba(16, 185, 129, 0.08);
+    color: var(--accent);
+}
+
+/* Distribución de grilla para los KPIs analíticos */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.stat-box {
+    text-align: center;
+    padding: 16px 10px;
+    background: rgba(79, 70, 229, 0.04);
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.stat-box.accent {
+    background: rgba(16, 185, 129, 0.04);
+}
+
+.stat-box svg {
+    width: 26px;
+    height: 26px;
+    stroke: var(--icon-color);
+}
+
+.stat-box.accent svg {
+    stroke: var(--accent);
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 600;
+}
+
+.stat-value {
+    font-size: 1.55rem;
+    font-weight: 800;
+}
+
+/* Formularios de entrada */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 18px;
+}
+
+label {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+label svg {
+    width: 18px;
+    height: 18px;
+    stroke: var(--text-muted);
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-size: 1.2rem;
+    outline: none;
+}
+
+input:focus {
+    border-color: var(--primary);
+}
+
+/* Mensajes de feedback al usuario */
+.feedback-message {
+    min-height: 24px;
+    margin-bottom: 12px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.feedback-message.success {
+    color: var(--accent);
+}
+
+.feedback-message.error {
+    color: #dc2626;
+}
+
+/* Estilo del botón principal de guardado */
+button.btn-submit {
+    width: 100%;
+    padding: 16px;
+    border-radius: 10px;
+    border: none;
+    background: var(--primary);
+    color: white;
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+    box-shadow: 0 4px 6px rgba(79, 70, 229, 0.15);
+}
+
+button.btn-submit:hover {
+    background: var(--primary-hover);
+}
+
+button.btn-submit svg {
+    width: 22px;
+    height: 22px;
+    stroke: white;
+}
+
+/* Sección de Historial Dinámico */
+.history-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 16px;
+    color: var(--text-muted);
+}
+
+.history-header svg {
+    width: 22px;
+    height: 22px;
+    stroke: var(--text-muted);
+}
+
+.history-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+
+.history-feedback {
+    display: none;
+    min-height: 20px;
+    margin-bottom: 10px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #dc2626;
+    background: rgba(220, 38, 38, 0.08);
+    border: 1px solid rgba(220, 38, 38, 0.16);
+}
+
+.history-feedback.is-visible {
+    display: block;
+}
+
+.list-container {
+    max-height: 280px;
+    overflow-y: auto;
+    /* Permite scroll interno si hay más de 10 elementos */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.list-container.is-updating {
+    opacity: 0.65;
+    transform: translateY(4px);
+}
+
+/* Tarjeta individual de reparación agregada */
+.item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px;
+    background: var(--bg-color);
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    gap: 10px;
+    animation: itemIn 0.22s ease;
+}
+
+@keyframes itemIn {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.item-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.item-desc {
+    font-size: 1.15rem;
+    font-weight: 500;
+}
+
+.item-date {
+    font-size: 0.9rem;
+    color: var(--text-muted);
+}
+
+.item-amount {
+    font-weight: 700;
+    color: var(--accent);
+    font-size: 1.2rem;
+}
+
+.item-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.delete-btn {
+    border: none;
+    background: rgba(220, 38, 38, 0.1);
+    color: #dc2626;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.delete-btn:hover {
+    background: rgba(220, 38, 38, 0.18);
+}
+
+.delete-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke: currentColor;
+}
+
+/* Área de interacción para exportación de archivos */
+.feedback-modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.2s ease, visibility 0.2s ease;
+}
+
+.feedback-modal.is-open {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+}
+
+.feedback-modal.is-closing {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+}
+
+.feedback-modal-content {
+    width: min(100%, 320px);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px;
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    transform: translateY(8px) scale(0.98);
+    transition: transform 0.2s ease;
+}
+
+.feedback-modal.is-open .feedback-modal-content {
+    transform: translateY(0) scale(1);
+}
+
+.feedback-modal.is-closing .feedback-modal-content {
+    transform: translateY(6px) scale(0.98);
+}
+
+.feedback-modal-content h3 {
+    margin-bottom: 8px;
+    font-size: 1.1rem;
+}
+
+.feedback-modal-content p {
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    line-height: 1.4;
+}
+
+.feedback-modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.feedback-modal-cancel,
+.feedback-modal-confirm {
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.feedback-modal-cancel {
+    background: var(--bg-color);
+    color: var(--text-color);
+}
+
+.feedback-modal-confirm {
+    background: var(--primary);
+    color: white;
+}
+
+.file-actions-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.file-label-btn {
+    width: 100%;
+    padding: 16px;
+    border-radius: 12px;
+    border: 2px solid var(--primary);
+    background: var(--btn-file-bg);
+    color: var(--text-color);
+    font-size: 1.2rem;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+}
+
+.file-label-btn:hover {
+    background: var(--bg-color);
+}
+
+.file-label-btn svg {
+    width: 24px;
+    height: 24px;
+    stroke: var(--primary);
+}
