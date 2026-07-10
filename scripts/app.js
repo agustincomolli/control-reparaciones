@@ -147,32 +147,99 @@ feedbackModal.addEventListener('click', (event) => {
 });
 
 exportExcelBtn.addEventListener('click', () => {
-    if (repairs.length === 0) {
-        openFeedbackModal('No hay trabajos registrados para exportar.');
-        return;
-    }
+    (async () => {
+        if (repairs.length === 0) {
+            openFeedbackModal('No hay trabajos registrados para exportar.');
+            return;
+        }
 
-    // Mapea la estructura interna a un formato con cabeceras amigables y legibles para el reporte Excel
-    const dataForExcel = repairs.map(repair => {
-        const [year, month, day] = repair.date.split('-');
-        return {
-            "Fecha": `${day}/${month}/${year}`,
-            "Descripción": repair.description,
-            "Monto ($)": repair.amount
-        };
-    });
+        try {
+            const wb = new ExcelJS.Workbook();
+            wb.creator = 'Control de Reparaciones';
+            const ws = wb.addWorksheet('Reparaciones');
 
-    // Genera el binario del libro de Excel (.xlsx) en memoria
-    const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
-    const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Reparaciones");
+            // Título grande
+            ws.mergeCells('A1:C2');
+            const titleCell = ws.getCell('A1');
+            titleCell.value = 'Control de Reparaciones';
+            titleCell.font = { size: 18, bold: true };
+            titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-    // Configura el ancho por defecto de las columnas en Excel para evitar que el texto se corte
-    worksheet['!cols'] = [{ wch: 15 }, { wch: 30 }, { wch: 15 }];
+            // Encabezados estilados (fila 4)
+            const headerRowIndex = 4;
+            ws.getRow(headerRowIndex).values = ['Fecha', 'Descripción', 'Monto ($)'];
+            const headerRow = ws.getRow(headerRowIndex);
+            headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
+            headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
+            headerRow.eachCell((cell) => {
+                cell.fill = { type: 'pattern', pattern: 'solid', fgColor: { argb: 'FF4F46E5' } };
+                cell.border = {
+                    top: { style: 'thin' }, left: { style: 'thin' }, bottom: { style: 'thin' }, right: { style: 'thin' }
+                };
+            });
 
-    // Dispara la descarga del navegador nativo
-    XLSX.writeFile(workbook, "control_reparaciones.xlsx");
-    showFeedback('Archivo Excel descargado correctamente.', 'success');
+            // Columnas
+            ws.columns = [
+                { key: 'fecha', width: 16 },
+                { key: 'desc', width: 50 },
+                { key: 'monto', width: 18 }
+            ];
+
+            // Rellenar datos a partir de la fila siguiente
+            let r = headerRowIndex + 1;
+            repairs.forEach(repair => {
+                const [year, month, day] = repair.date.split('-');
+                const fecha = `${day}/${month}/${year}`;
+                const row = ws.getRow(r);
+                row.getCell(1).value = fecha;
+                row.getCell(2).value = repair.description;
+                row.getCell(3).value = repair.amount;
+                row.getCell(3).numFmt = '#,##0.00';
+                r++;
+            });
+
+            // Formato general de la tabla
+            ws.eachRow({ includeEmpty: false }, function (row, rowNumber) {
+                row.alignment = { vertical: 'middle' };
+            });
+
+            // Footer con texto simple (sin logos)
+            const footerRowIndex = r + 2;
+            ws.mergeCells(`A${footerRowIndex}:C${footerRowIndex}`);
+            const footerCell = ws.getCell(`A${footerRowIndex}`);
+            footerCell.value = 'Diseñado por Agustín Comolli';
+            footerCell.font = { italic: true, color: { argb: 'FF6B7280' } };
+            footerCell.alignment = { horizontal: 'left' };
+
+            // Estética: bordes suaves para la zona de datos
+            for (let i = headerRowIndex; i < r; i++) {
+                const row = ws.getRow(i);
+                row.eachCell((cell) => {
+                    cell.border = { bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } } };
+                });
+            }
+
+            const buf = await wb.xlsx.writeBuffer();
+            saveAs(new Blob([buf], { type: 'application/octet-stream' }), 'control_reparaciones.xlsx');
+            showFeedback('Archivo Excel descargado correctamente.', 'success');
+        } catch (err) {
+            console.error('Export ExcelJS failed:', err);
+            // Fallback simple con SheetJS
+            const dataForExcel = repairs.map(repair => {
+                const [year, month, day] = repair.date.split('-');
+                return {
+                    "Fecha": `${day}/${month}/${year}`,
+                    "Descripción": repair.description,
+                    "Monto ($)": repair.amount
+                };
+            });
+            const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Reparaciones");
+            worksheet['!cols'] = [{ wch: 15 }, { wch: 30 }, { wch: 15 }];
+            XLSX.writeFile(workbook, "control_reparaciones.xlsx");
+        }
+    })();
 });
 
 /**
