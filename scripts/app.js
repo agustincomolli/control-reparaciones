@@ -241,8 +241,16 @@ function renderHistory() {
         return;
     }
 
+    const sortedRepairs = [...repairs]
+        .sort((a, b) => {
+            const dateCompare = new Date(b.date) - new Date(a.date);
+            if (dateCompare !== 0) return dateCompare;
+            return a.description.localeCompare(b.description, 'es', { sensitivity: 'base' });
+        })
+        .slice(0, 10);
+
     // Secciona solo los primeros 10 elementos para no sobrecargar el renderizado del DOM en móviles
-    repairs.slice(0, 10).forEach(repair => {
+    sortedRepairs.forEach(repair => {
         const [year, month, day] = repair.date.split('-');
         const formattedDate = `${day}/${month}/${year}`;
 
