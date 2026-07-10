@@ -17,6 +17,26 @@
     --border: #e2e8f0;
     --icon-color: #4f46e5;
     --btn-file-bg: rgba(79, 70, 229, 0.08);
+    --footer-bg: rgba(255, 255, 255, 0.55);
+    --footer-border: rgba(226, 232, 240, 0.9);
+    --footer-title: #718096;
+    --footer-name: #2d3748;
+}
+
+.dark-mode {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --text-color: #f1f5f9;
+    --text-muted: #94a3b8;
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --border: #334155;
+    --icon-color: #38bdf8;
+    --btn-file-bg: rgba(255, 255, 255, 0.06);
+    --footer-bg: rgba(15, 23, 42, 0.72);
+    --footer-border: rgba(148, 163, 184, 0.32);
+    --footer-title: #cbd5e1;
+    --footer-name: #f8fafc;
 }
 
 /* Inyección de variables en modo oscuro (Se activa añadiendo la clase al body) */
@@ -482,8 +502,8 @@ button.btn-submit svg {
     gap: 10px;
     padding: 8px 12px;
     border-radius: 999px;
-    background: rgba(255, 255, 255, 0.55);
-    border: 1px solid var(--border);
+    background: var(--footer-bg);
+    border: 1px solid var(--footer-border);
     box-shadow: 0 4px 10px rgba(15, 23, 42, 0.05);
 }
 
@@ -506,14 +526,14 @@ button.btn-submit svg {
     font-size: 0.72rem;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--text-muted);
+    color: var(--footer-title);
     font-weight: 600;
 }
 
 .footer-brand__name {
     font-size: 0.95rem;
     font-weight: 700;
-    color: var(--text-color);
+    color: var(--footer-name);
 }
 
 .file-label-btn {
