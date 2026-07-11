@@ -4,19 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Controla tus reparaciones y tus ingresos técnicos de forma local y sencilla.">
     <title>Control de Reparaciones</title>
 
     <!-- ==========================================
          ICONOS Y MANIFEST (Configuración PWA)
          ========================================== -->
-    <!-- Icono de la pestaña del navegador -->
     <link rel="icon" type="image/png" href="assets/icons/favicon.png">
-    <!-- Vinculación del manifiesto para instalación como App Nativa -->
+    <link rel="apple-touch-icon" href="assets/images/logo.png">
     <link rel="manifest" href="manifest.json">
-    <!-- Color de la barra de estado en dispositivos móviles -->
     <meta name="theme-color" content="#4f46e5">
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0f172a">
 
-    <!-- Metaetiquetas exclusivas para optimización en iOS (Apple) -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="Reparaciones">
@@ -24,42 +23,31 @@
     <!-- ==========================================
          DEPENDENCIAS EXTERNAS
          ========================================== -->
-    <!-- Librería SheetJS (XLSX) cargada vía CDN para la exportación local a Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    <!-- ExcelJS + FileSaver para exportación avanzada y estilo profesional -->
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
 
-    <!-- Hojas de estilo de la aplicación -->
     <link rel="stylesheet" href="styles/style.css">
 </head>
 
 <body>
-
-    <!-- Contenedor principal restringido para emular una interfaz móvil de 480px -->
     <div class="app-container">
-
-        <!-- ENCABEZADO: Título y Selector de Tema -->
         <header>
             <div class="header-title">
                 <h1>Mis Reparaciones</h1>
                 <p>Control de ingresos técnicos</p>
             </div>
-            <!-- Botón interactivo para alternar entre modo claro y oscuro -->
             <button class="theme-toggle" id="themeBtn" title="Cambiar tema">
                 <svg id="themeIcon" viewBox="0 0 24 24"></svg>
             </button>
         </header>
 
-        <!-- INDICADOR DE ESTADO: Muestra la persistencia local fuera del servidor -->
         <div class="file-status" id="fileStatus">
             <span style="display:inline-block; width:8px; height:8px; background:#10b981; border-radius:50%;"></span>
             Aplicación nativa (Datos Seguros)
         </div>
 
-        <!-- PANEL DE ESTADÍSTICAS: Resumen financiero en tiempo real -->
         <div class="card stats-grid">
-            <!-- Total facturado en el mes en curso -->
             <div class="stat-box">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round"
@@ -68,20 +56,17 @@
                 <div class="stat-label">Este Mes</div>
                 <div class="stat-value" id="monthTotal">$0</div>
             </div>
-            <!-- Promedio mensual histórico calculado -->
             <div class="stat-box accent">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                 </svg>
-                <div class="stat-label">Promedio</div>
+                <div class="stat-label">Promedio (meses activos)</div>
                 <div class="stat-value" id="monthlyAverage">$0</div>
             </div>
         </div>
 
-        <!-- FORMULARIO DE INGRESO: Captura de datos del trabajo técnico -->
         <div class="card">
             <form id="repairForm">
-                <!-- Campo de Monto Financiero -->
                 <div class="form-group">
                     <label for="amount">
                         <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
@@ -90,11 +75,10 @@
                         </svg>
                         Monto Ganado ($)
                     </label>
-                    <!-- inputmode="numeric" optimiza el despliegue del teclado numérico en móviles -->
-                    <input type="number" id="amount" placeholder="Ej: 15000" required inputmode="numeric">
+                    <input type="number" id="amount" placeholder="Ej: 15000" required inputmode="decimal" min="0.01"
+                        max="999999999.99" step="0.01">
                 </div>
 
-                <!-- Campo de Descripción del servicio -->
                 <div class="form-group">
                     <label for="description">
                         <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
@@ -106,7 +90,6 @@
                     <input type="text" id="description" placeholder="Ej: Cambio de SSD / Limpieza">
                 </div>
 
-                <!-- Campo de Fecha del trabajo -->
                 <div class="form-group">
                     <label for="date">
                         <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
@@ -120,7 +103,6 @@
 
                 <div id="feedbackMessage" class="feedback-message" role="status" aria-live="polite"></div>
 
-                <!-- Botón de acción para persistir datos -->
                 <button type="submit" class="btn-submit">
                     <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
@@ -130,7 +112,6 @@
             </form>
         </div>
 
-        <!-- HISTORIAL: Listado dinámico de los últimos trabajos realizados -->
         <div class="card">
             <div class="history-header">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="2">
@@ -140,19 +121,18 @@
                 <div class="history-title">Últimos trabajos registrados</div>
             </div>
             <div id="historyFeedback" class="history-feedback" aria-live="polite"></div>
-            <!-- Este contenedor se poblará mediante manipulaciones del DOM en app.js -->
             <div class="list-container" id="historyList"></div>
         </div>
 
-        <!-- SECCIÓN DE EXPORTACIÓN: Acciones de persistencia externa -->
         <div class="file-actions-area">
-            <button class="file-label-btn" id="exportExcelBtn">
+            <button class="file-label-btn" id="dataActionsBtn">
                 <svg fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                        d="M12 4v16m0 0l-4-4m4 4l4-4M12 4l-4 4m4-4l4 4" />
                 </svg>
-                <span>Exportar a Excel (.xlsx)</span>
+                <span>Importar/Exportar datos</span>
             </button>
+            <input type="file" id="importBackupInput" accept="application/json,.json" hidden>
         </div>
 
         <footer class="app-footer">
@@ -177,7 +157,27 @@
         </div>
     </div>
 
-    <!-- Script de lógica de negocio y control del DOM -->
+    <div id="dataActionsModal" class="feedback-modal" aria-hidden="true">
+        <div class="feedback-modal-content" role="dialog" aria-modal="true" aria-labelledby="dataActionsModalTitle">
+            <h3 id="dataActionsModalTitle">Importar o exportar datos</h3>
+            <p>Elegí la acción que querés realizar con tus registros.</p>
+            <div class="data-actions-list">
+                <button class="data-action-btn" id="exportJsonBtn">
+                    <span>Exportar respaldo (.json)</span>
+                </button>
+                <button class="data-action-btn" id="importJsonBtn">
+                    <span>Importar respaldo (.json)</span>
+                </button>
+                <button class="data-action-btn" id="exportExcelBtn">
+                    <span>Exportar a Excel (.xlsx)</span>
+                </button>
+            </div>
+            <div class="feedback-modal-actions">
+                <button id="dataActionsCancel" class="feedback-modal-cancel">Cerrar</button>
+            </div>
+        </div>
+    </div>
+
     <script src="scripts/app.js"></script>
 </body>
 

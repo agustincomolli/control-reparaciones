@@ -5,7 +5,7 @@
  * ==========================================================================
  */
 
-const CACHE_NAME = 'reparaciones-cache-v11';
+const CACHE_NAME = 'reparaciones-cache-v13';
 
 const ASSETS = [
   './',
