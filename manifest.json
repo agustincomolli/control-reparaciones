@@ -11,15 +11,9 @@
   "icons": [
     {
       "src": "assets/images/logo.png",
-      "sizes": "192x192",
+      "sizes": "320x320",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "assets/images/logo.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "maskable"
     }
   ]
 }
