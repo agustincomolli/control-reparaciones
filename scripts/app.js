@@ -120,6 +120,8 @@ const feedbackModalTitle = getRequiredElement('feedbackModalTitle');
 const feedbackModalMessage = getRequiredElement('feedbackModalMessage');
 const feedbackModalCancel = getRequiredElement('feedbackModalCancel');
 const feedbackModalConfirm = getRequiredElement('feedbackModalConfirm');
+const monthTotalElement = getRequiredElement('monthTotal');
+const monthlyAverageElement = getRequiredElement('monthlyAverage');
 let pendingDeleteId = null;
 let lastFocusedElement = null;
 
@@ -614,9 +616,6 @@ historyList.addEventListener('click', (event) => {
  * Procesa el total facturado del mes calendario en curso, así como el promedio mensual general histórico.
  */
 function calculateStats() {
-    const monthTotalElement = getRequiredElement('monthTotal');
-    const monthlyAverageElement = getRequiredElement('monthlyAverage');
-
     if (repairs.length === 0) {
         monthTotalElement.innerText = '$0';
         monthlyAverageElement.innerText = '$0';
