@@ -5,7 +5,7 @@
  * ==========================================================================
  */
 
-const CACHE_NAME = 'reparaciones-cache-v17';
+const CACHE_NAME = 'reparaciones-cache-' + Date.now();
 
 const ASSETS = [
   './',
@@ -14,7 +14,8 @@ const ASSETS = [
   'styles/style.css',
   'scripts/app.js',
   'assets/icons/favicon.png',
-  'assets/images/logo.png'
+  'assets/images/logo.png',
+  'assets/images/logo-brand.png'
 ];
 
 self.addEventListener('install', (event) => {

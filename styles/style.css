@@ -39,19 +39,6 @@
     --footer-name: #f8fafc;
 }
 
-/* Inyección de variables en modo oscuro (Se activa añadiendo la clase al body) */
-.dark-mode {
-    --bg-color: #0f172a;
-    --card-bg: #1e293b;
-    --text-color: #f1f5f9;
-    --text-muted: #94a3b8;
-    --primary: #6366f1;
-    --primary-hover: #4f46e5;
-    --border: #334155;
-    --icon-color: #38bdf8;
-    --btn-file-bg: rgba(255, 255, 255, 0.06);
-}
-
 /* Reseteo general y optimización de renderizado */
 * {
     box-sizing: border-box;

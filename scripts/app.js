@@ -1,7 +1,7 @@
 /**
  * ==========================================================================
  * LÓGICA DE NEGOCIO Y MANIPULACIÓN DEL DOM - CONTROL DE REPARACIONES
- * Aplicación cliente PWA que interactúa con LocalStorage y SheetJS (XLSX).
+ * Aplicación cliente PWA que interactúa con LocalStorage y ExcelJS.
  * ==========================================================================
  */
 
@@ -17,8 +17,8 @@ if ('serviceWorker' in navigator) {
 // ==========================================
 // GESTIÓN DE TEMA INTERFAZ (DARK / LIGHT MODE)
 // ==========================================
-const themeBtn = document.getElementById('themeBtn');
-const themeIcon = document.getElementById('themeIcon');
+const themeBtn = getRequiredElement('themeBtn');
+const themeIcon = getRequiredElement('themeIcon');
 
 // Paths SVG optimizados para renderizado de íconos
 const sunIcon = `<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37c-.39-.39-1.03-.39-1.41 0s-.39 1.03 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41l-1.06-1.06zm1.06-12.37c-.39-.39-1.03-.39-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.03 0-1.41zm-12.37 12.37l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06c.39-.38.39-1.03 0-1.41z"/>`;
@@ -54,6 +54,14 @@ function safeThemeSet(theme) {
     }
 }
 
+function getRequiredElement(id) {
+    const element = document.getElementById(id);
+    if (!element) {
+        throw new Error(`No se encontró el elemento con id "${id}".`);
+    }
+    return element;
+}
+
 // Inicializa el tema basado en las preferencias persistidas del usuario
 let currentTheme = localStorage.getItem('theme') || 'light';
 if (currentTheme === 'dark') {
@@ -87,31 +95,31 @@ themeBtn.addEventListener('click', () => {
 
 // Setea por defecto el campo date del HTML con la fecha de hoy en formato YYYY-MM-DD
 const today = new Date().toISOString().split('T')[0];
-document.getElementById('date').value = today;
+getRequiredElement('date').value = today;
 
 // Carga inicial del array de reparaciones desde LocalStorage
 let repairs = safeStorageGet('repairs', []);
 
 // Elementos del DOM requeridos para el flujo
-const form = document.getElementById('repairForm');
-const historyList = document.getElementById('historyList');
-const historyFeedback = document.getElementById('historyFeedback');
-const dataActionsBtn = document.getElementById('dataActionsBtn');
-const dataActionsModal = document.getElementById('dataActionsModal');
-const dataActionsCancel = document.getElementById('dataActionsCancel');
-const exportExcelBtn = document.getElementById('exportExcelBtn');
-const exportJsonBtn = document.getElementById('exportJsonBtn');
-const importJsonBtn = document.getElementById('importJsonBtn');
-const importBackupInput = document.getElementById('importBackupInput');
-const amountInput = document.getElementById('amount');
-const descriptionInput = document.getElementById('description');
-const dateInput = document.getElementById('date');
-const feedbackMessage = document.getElementById('feedbackMessage');
-const feedbackModal = document.getElementById('feedbackModal');
-const feedbackModalTitle = document.getElementById('feedbackModalTitle');
-const feedbackModalMessage = document.getElementById('feedbackModalMessage');
-const feedbackModalCancel = document.getElementById('feedbackModalCancel');
-const feedbackModalConfirm = document.getElementById('feedbackModalConfirm');
+const form = getRequiredElement('repairForm');
+const historyList = getRequiredElement('historyList');
+const historyFeedback = getRequiredElement('historyFeedback');
+const dataActionsBtn = getRequiredElement('dataActionsBtn');
+const dataActionsModal = getRequiredElement('dataActionsModal');
+const dataActionsCancel = getRequiredElement('dataActionsCancel');
+const exportExcelBtn = getRequiredElement('exportExcelBtn');
+const exportJsonBtn = getRequiredElement('exportJsonBtn');
+const importJsonBtn = getRequiredElement('importJsonBtn');
+const importBackupInput = getRequiredElement('importBackupInput');
+const amountInput = getRequiredElement('amount');
+const descriptionInput = getRequiredElement('description');
+const dateInput = getRequiredElement('date');
+const feedbackMessage = getRequiredElement('feedbackMessage');
+const feedbackModal = getRequiredElement('feedbackModal');
+const feedbackModalTitle = getRequiredElement('feedbackModalTitle');
+const feedbackModalMessage = getRequiredElement('feedbackModalMessage');
+const feedbackModalCancel = getRequiredElement('feedbackModalCancel');
+const feedbackModalConfirm = getRequiredElement('feedbackModalConfirm');
 let pendingDeleteId = null;
 let lastFocusedElement = null;
 
@@ -218,16 +226,47 @@ function closeDataActionsModal() {
     window.setTimeout(() => {
         dataActionsModal.classList.remove('is-closing');
         dataActionsModal.setAttribute('aria-hidden', 'true');
+        if (lastFocusedElement && typeof lastFocusedElement.focus === 'function') {
+            lastFocusedElement.focus();
+        }
+        lastFocusedElement = null;
     }, 180);
 }
 
 function openDataActionsModal() {
+    lastFocusedElement = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     dataActionsModal.classList.add('is-open');
     dataActionsModal.setAttribute('aria-hidden', 'false');
+
+    const firstActionButton = dataActionsModal.querySelector('button');
+    if (firstActionButton) {
+        firstActionButton.focus();
+    }
 }
 
 dataActionsBtn.addEventListener('click', openDataActionsModal);
 dataActionsCancel.addEventListener('click', closeDataActionsModal);
+dataActionsModal.addEventListener('keydown', (event) => {
+    if (event.key === 'Escape') {
+        event.preventDefault();
+        closeDataActionsModal();
+        return;
+    }
+
+    if (event.key === 'Tab') {
+        const focusableButtons = dataActionsModal.querySelectorAll('button');
+        const firstButton = focusableButtons[0];
+        const lastButton = focusableButtons[focusableButtons.length - 1];
+
+        if (event.shiftKey && document.activeElement === firstButton) {
+            event.preventDefault();
+            lastButton.focus();
+        } else if (!event.shiftKey && document.activeElement === lastButton) {
+            event.preventDefault();
+            firstButton.focus();
+        }
+    }
+});
 dataActionsModal.addEventListener('click', (event) => {
     if (event.target === dataActionsModal) {
         closeDataActionsModal();
@@ -332,21 +371,19 @@ exportExcelBtn.addEventListener('click', () => {
         }
 
         try {
-            const wb = new ExcelJS.Workbook();
-            wb.creator = 'Control de Reparaciones';
-            const ws = wb.addWorksheet('Reparaciones');
+            const workbook = new ExcelJS.Workbook();
+            workbook.creator = 'Control de Reparaciones';
+            const worksheet = workbook.addWorksheet('Reparaciones');
 
-            // Título grande
-            ws.mergeCells('A1:C2');
-            const titleCell = ws.getCell('A1');
+            worksheet.mergeCells('A1:C2');
+            const titleCell = worksheet.getCell('A1');
             titleCell.value = 'Control de Reparaciones';
             titleCell.font = { size: 18, bold: true };
             titleCell.alignment = { vertical: 'middle', horizontal: 'center' };
 
-            // Encabezados estilados (fila 4)
             const headerRowIndex = 4;
-            ws.getRow(headerRowIndex).values = ['Fecha', 'Descripción', 'Monto ($)'];
-            const headerRow = ws.getRow(headerRowIndex);
+            worksheet.getRow(headerRowIndex).values = ['Fecha', 'Descripción', 'Monto ($)'];
+            const headerRow = worksheet.getRow(headerRowIndex);
             headerRow.font = { bold: true, color: { argb: 'FFFFFFFF' } };
             headerRow.alignment = { vertical: 'middle', horizontal: 'center' };
             headerRow.eachCell((cell) => {
@@ -356,60 +393,56 @@ exportExcelBtn.addEventListener('click', () => {
                 };
             });
 
-            ws.columns = [
+            worksheet.columns = [
                 { key: 'fecha', width: 16 },
                 { key: 'desc', width: 50 },
                 { key: 'monto', width: 18 }
             ];
 
-            let r = headerRowIndex + 1;
-            repairs.forEach(repair => {
+            let rowIndex = headerRowIndex + 1;
+            repairs.forEach((repair) => {
                 const [year, month, day] = repair.date.split('-');
                 const fecha = `${day}/${month}/${year}`;
-                const row = ws.getRow(r);
+                const row = worksheet.getRow(rowIndex);
                 row.getCell(1).value = fecha;
                 row.getCell(2).value = repair.description;
                 row.getCell(3).value = repair.amount;
                 row.getCell(3).numFmt = '#,##0.00';
-                r++;
+                rowIndex++;
             });
 
-            ws.eachRow({ includeEmpty: false }, function (row) {
+            worksheet.eachRow({ includeEmpty: false }, function (row) {
                 row.alignment = { vertical: 'middle' };
             });
 
-            const footerRowIndex = r + 2;
-            ws.mergeCells(`A${footerRowIndex}:C${footerRowIndex}`);
-            const footerCell = ws.getCell(`A${footerRowIndex}`);
+            const footerRowIndex = rowIndex + 2;
+            worksheet.mergeCells(`A${footerRowIndex}:C${footerRowIndex}`);
+            const footerCell = worksheet.getCell(`A${footerRowIndex}`);
             footerCell.value = 'Diseñado por Agustín Comolli';
             footerCell.font = { italic: true, color: { argb: 'FF6B7280' } };
             footerCell.alignment = { horizontal: 'left' };
 
-            for (let i = headerRowIndex; i < r; i++) {
-                const row = ws.getRow(i);
+            for (let i = headerRowIndex; i < rowIndex; i++) {
+                const row = worksheet.getRow(i);
                 row.eachCell((cell) => {
                     cell.border = { bottom: { style: 'thin', color: { argb: 'FFE5E7EB' } } };
                 });
             }
 
-            const buf = await wb.xlsx.writeBuffer();
-            saveAs(new Blob([buf], { type: 'application/octet-stream' }), 'control_reparaciones.xlsx');
+            const buffer = await workbook.xlsx.writeBuffer();
+            const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'control_reparaciones.xlsx';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
             showFeedback('Archivo Excel descargado correctamente.', 'success');
         } catch (err) {
             console.error('Export ExcelJS failed:', err);
-            const dataForExcel = repairs.map(repair => {
-                const [year, month, day] = repair.date.split('-');
-                return {
-                    'Fecha': `${day}/${month}/${year}`,
-                    'Descripción': repair.description,
-                    'Monto ($)': repair.amount
-                };
-            });
-            const worksheet = XLSX.utils.json_to_sheet(dataForExcel);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, 'Reparaciones');
-            worksheet['!cols'] = [{ wch: 15 }, { wch: 30 }, { wch: 15 }];
-            XLSX.writeFile(workbook, 'control_reparaciones.xlsx');
+            showFeedback('No se pudo generar el archivo Excel.', 'error');
         }
     })();
 });
@@ -581,9 +614,12 @@ historyList.addEventListener('click', (event) => {
  * Procesa el total facturado del mes calendario en curso, así como el promedio mensual general histórico.
  */
 function calculateStats() {
+    const monthTotalElement = getRequiredElement('monthTotal');
+    const monthlyAverageElement = getRequiredElement('monthlyAverage');
+
     if (repairs.length === 0) {
-        document.getElementById('monthTotal').innerText = '$0';
-        document.getElementById('monthlyAverage').innerText = '$0';
+        monthTotalElement.innerText = '$0';
+        monthlyAverageElement.innerText = '$0';
         return;
     }
 
@@ -612,8 +648,8 @@ function calculateStats() {
     const totalEarnedAllTime = Object.values(monthlyTotals).reduce((a, b) => a + b, 0);
     const average = monthsTracked > 0 ? (totalEarnedAllTime / monthsTracked) : 0;
 
-    document.getElementById('monthTotal').innerText = `$${currentMonthTotal.toLocaleString('es-AR')}`;
-    document.getElementById('monthlyAverage').innerText = `$${Math.round(average).toLocaleString('es-AR')}`;
+    monthTotalElement.innerText = `$${currentMonthTotal.toLocaleString('es-AR')}`;
+    monthlyAverageElement.innerText = `$${Math.round(average).toLocaleString('es-AR')}`;
 }
 
 updateApp();
