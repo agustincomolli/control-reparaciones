@@ -11,9 +11,21 @@
   "icons": [
     {
       "src": "assets/images/logo.png",
-      "sizes": "1024x1024",
+      "sizes": "320x320",
       "type": "image/png",
       "purpose": "any"
+    },
+    {
+      "src": "assets/images/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "assets/images/logo-maskable.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }
