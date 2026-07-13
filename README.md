@@ -14,6 +14,7 @@ Control de Reparaciones es una aplicación web progresiva (PWA) pensada para reg
 - Historial de los últimos trabajos registrados
 - Eliminación de registros con confirmación previa
 - Exportación de datos a Excel (.xlsx)
+- Respaldo y restauración de datos en formato JSON
 - Funciona de forma local y con soporte básico offline mediante PWA
 - Tema claro y oscuro
 
@@ -21,29 +22,45 @@ Control de Reparaciones es una aplicación web progresiva (PWA) pensada para reg
 
 - HTML5
 - CSS3
-- JavaScript vanilla
+- JavaScript vanilla, organizado en módulos ES6 (sin frameworks ni bundler)
 - LocalStorage para persistencia local
-- SheetJS para exportación a Excel
+- ExcelJS para exportación a Excel, cargado desde CDN con Subresource Integrity (SRI)
 - Service Worker para soporte offline básico
 
 ## 📁 Estructura del proyecto
 
-- index.html: estructura principal de la interfaz
-- styles/style.css: estilos visuales, tema y animaciones
-- scripts/app.js: lógica de negocio y manipulación del DOM
-- service-worker.js: caché y comportamiento offline
-- manifest.json: configuración de la PWA
+- `index.html`: estructura principal de la interfaz
+- `styles/style.css`: estilos visuales, tema y animaciones
+- `scripts/app.js`: punto de entrada; conecta los módulos entre sí
+- `scripts/modules/dom.js`: referencias centralizadas a los elementos del HTML
+- `scripts/modules/storage.js`: envoltorios seguros sobre localStorage
+- `scripts/modules/theme.js`: modo claro/oscuro
+- `scripts/modules/repairs-store.js`: capa de datos (fuente de verdad de las reparaciones)
+- `scripts/modules/repairs-form.js`: alta de trabajos desde el formulario
+- `scripts/modules/repairs-history.js`: listado y eliminación de trabajos
+- `scripts/modules/stats.js`: cálculo de estadísticas mensuales
+- `scripts/modules/modals.js`: diálogos de confirmación/aviso y menú de datos
+- `scripts/modules/data-transfer.js`: exportación a Excel y respaldo/restauración en JSON
+- `scripts/modules/utils.js`: utilidades genéricas (formato de fechas)
+- `service-worker.js`: caché y comportamiento offline
+- `manifest.json`: configuración de la PWA
 
 ## ▶️ Cómo usarla
 
-1. Abre el archivo index.html en tu navegador o sirve la carpeta con un servidor local.
-2. Completa el formulario con el monto, la descripción y la fecha del trabajo.
-3. Guarda el registro y revisa el historial.
-4. Si lo deseas, exporta los datos a Excel.
+> ⚠️ **Importante:** la app usa módulos de JavaScript (ES6), por lo que **no funciona abriendo `index.html` con doble clic** (el navegador bloquea los módulos cargados desde `file://` por seguridad). Es necesario servirla desde un servidor local.
+
+1. Servís la carpeta del proyecto con un servidor local. Cualquiera de estas opciones funciona:
+   - `npx serve .`
+   - `python3 -m http.server 8080`
+   - La extensión "Live Server" de Visual Studio Code
+2. Abrí en tu navegador la URL que te indique el servidor (por ejemplo, `http://localhost:8080`).
+3. Completa el formulario con el monto, la descripción y la fecha del trabajo.
+4. Guarda el registro y revisa el historial.
+5. Si lo deseas, exporta los datos a Excel o generá un respaldo en JSON desde el botón de gestión de datos.
 
 ## ✅ Requisitos
 
-No requiere dependencias adicionales para funcionar de forma básica. La exportación a Excel utiliza la librería SheetJS cargada desde CDN.
+No requiere dependencias adicionales para funcionar de forma básica, más que un servidor HTTP local para servir los archivos estáticos (ver sección anterior). La exportación a Excel utiliza la librería ExcelJS cargada desde CDN.
 
 ## 🔐 Almacenamiento de datos
 

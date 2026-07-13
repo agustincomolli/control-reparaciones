@@ -13,8 +13,21 @@ const ASSETS = [
   'manifest.json',
   'styles/style.css',
   'scripts/app.js',
+  'scripts/modules/dom.js',
+  'scripts/modules/storage.js',
+  'scripts/modules/theme.js',
+  'scripts/modules/repairs-store.js',
+  'scripts/modules/modals.js',
+  'scripts/modules/repairs-history.js',
+  'scripts/modules/stats.js',
+  'scripts/modules/repairs-form.js',
+  'scripts/modules/data-transfer.js',
+  'scripts/modules/utils.js',
   'assets/icons/favicon.png',
   'assets/images/logo.png',
+  'assets/images/logo-320.png',
+  'assets/images/logo-512.png',
+  'assets/images/logo-maskable.png',
   'assets/images/logo-brand.png'
 ];
 
