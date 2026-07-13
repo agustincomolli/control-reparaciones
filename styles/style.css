@@ -502,6 +502,53 @@ button.btn-submit svg {
     transform: translateY(-1px);
 }
 
+/*
+ * Modal de importar/exportar datos: más grande que el modal de
+ * confirmación genérico (feedback-modal-content), ya que la app es
+ * principalmente móvil y estos botones son el flujo más usado del menú
+ * de datos. Se apunta por #dataActionsModal para no afectar al modal
+ * de confirmación/aviso, que comparte la misma clase base.
+ */
+#dataActionsModal .feedback-modal-content {
+    width: min(100%, 440px);
+    padding: 28px 24px;
+    border-radius: 22px;
+}
+
+#dataActionsModal .feedback-modal-content h3 {
+    font-size: 1.35rem;
+    margin-bottom: 10px;
+}
+
+#dataActionsModal .feedback-modal-content p {
+    font-size: 1.05rem;
+    margin-bottom: 20px;
+}
+
+#dataActionsModal .data-actions-list {
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+#dataActionsModal .data-action-btn {
+    min-height: 64px;
+    padding: 16px 20px;
+    font-size: 1.15rem;
+    gap: 14px;
+    border-radius: 14px;
+}
+
+#dataActionsModal .action-icon {
+    width: 24px;
+    height: 24px;
+}
+
+#dataActionsModal .feedback-modal-cancel {
+    padding: 14px 20px;
+    font-size: 1.05rem;
+    min-height: 48px;
+}
+
 
 .file-actions-area {
     display: flex;
