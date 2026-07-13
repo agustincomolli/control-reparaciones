@@ -14,12 +14,6 @@
       "sizes": "320x320",
       "type": "image/png",
       "purpose": "any"
-    },
-    {
-      "src": "assets/images/logo-520.png",
-      "sizes": "512x512",
-      "type": "image/png",
-      "purpose": "any"
     }
   ]
 }
