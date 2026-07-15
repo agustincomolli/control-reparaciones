@@ -28,7 +28,8 @@ const ASSETS = [
   'assets/images/logo-320.png',
   'assets/images/logo-512.png',
   'assets/images/logo-maskable.png',
-  'assets/images/logo-brand.png'
+  'assets/images/logo-brand.png',
+  'assets/images/logo-brand-circle.png'
 ];
 
 self.addEventListener('install', (event) => {
